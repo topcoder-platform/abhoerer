@@ -7,58 +7,11 @@
 const app = require('../app');
 const debug = require('debug')('abhoerer:server');
 const http = require('http');
-const url = require('url');
-const WebSocket = require('ws');
-
+const WSHelper = require('../helpers/WSHelper.js')
 
 /**
  * Get port from environment and store in Express.
  */
-
-const port = normalizePort(process.env.PORT || '3000');
-app.set('port', port);
-
-/**
- * Create HTTP server.
- */
-
-const server = http.createServer(app);
-const wss = new WebSocket.Server({
-  server
-});
-
-wss.on('connection', function connection(ws, req) {
-  const location = url.parse(req.url, true);
-  // You might use location.query.access_token to authenticate or share sessions
-  // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
-
-  ws.on('message', function incoming(message) {
-    console.log('received: %s', message);
-    ws.send(message);
-    // CWD: TODO: post back to kafka bus
-  });
-
-  ws.send(JSON.stringify({
-    text: 'starting up'
-  }));
-});
-
-server.listen(port, function listening() {
-  console.log('Listening on %d', server.address().port);
-});
-
-/**
- * Listen on provided port, on all network interfaces.
- */
-
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
-
-/**
- * Normalize a port into a number, string, or false.
- */
-
 function normalizePort(val) {
   const port = parseInt(val, 10);
 
@@ -75,38 +28,48 @@ function normalizePort(val) {
   return false;
 }
 
+const port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
+
 /**
- * Event listener for HTTP server "error" event.
+ * Create HTTP server.
  */
 
-function onError(error) {
+const server = http.createServer(app);
+const ws = new WSHelper(server);
+
+server.listen(port, () => {
+  console.log('Listening on %d', server.address().port);
+});
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port);
+server.on('error', (error) => {
   if (error.syscall !== 'listen') {
     throw error;
   }
 
-  const bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
+  const bind = typeof port === 'string' ? `Pipe ${port}` : `Port ${port}`;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
+      console.error(`${bind} requires elevated privileges`);
       process.exit(1);
       break;
     case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
+      console.error(`${bind} is already in use`);
       process.exit(1);
       break;
     default:
       throw error;
   }
-}
-
-/**
- * Event listener for HTTP server "listening" event.
- */
-
-function onListening() {
+});
+server.on('listening', () => {
   const addr = server.address();
-  const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
-  debug('Listening on ' + bind);
-}
+  const bind = typeof addr === 'string' ? `pipe ${addr}` : `port ${addr.port}`;
+  debug(`Listening on ${bind}`);
+});
