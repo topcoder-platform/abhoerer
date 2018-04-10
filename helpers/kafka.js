@@ -9,7 +9,8 @@ const Offset = kafka.Offset;
 
 class Kafka {
   constructor(processor) {
-    this.processor = _.isFunction(processor) ? processor : (message) => {
+    this.processors = [];
+    const p = _.isFunction(processor) ? processor : (message) => {
       let payload = null;
 
       try {
@@ -21,11 +22,17 @@ class Kafka {
 
       return payload;
     };
+
+    this.addProcessor(p);
     this.client = new kafka.KafkaClient(config.KAFKA_OPTIONS);
     this.consumer = new kafka.Consumer(this.client, [{ topic: config.TOPIC, partition: config.PARTITION }], { autoCommit: true });
     this.consumer.setOffset(config.TOPIC, 0, 0);
     this.offset = new Offset(this.client);
     logger.info(`connecting on topic: ${config.TOPIC}`);
+  }
+
+  addProcessor(processor) {
+    this.processors.push(processor);
   }
 
   run() {
@@ -50,7 +57,9 @@ class Kafka {
 
     this.consumer.on('message', (message) => {
       logger.info(`received message from kafka: ${JSON.stringify(message)}`);
-      this.processor(message);
+      _.forEach(this.processors, (p) => {
+        p(message);
+      });
     });
   }
 }

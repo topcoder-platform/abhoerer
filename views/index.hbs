@@ -12,7 +12,7 @@
   <button id="sendBtn" >send</button>
 </div>
 
-
+<script type="text/javascript" src="/bower_components/lodash/dist/lodash.min.js"></script>
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.0.min.js"></script>
 <script type="text/javascript" src="/bower_components/jquery-simple-websocket/dist/jquery.simple.websocket.min.js"></script>
 <script type="text/javascript">
@@ -36,8 +36,14 @@ $( document ).ready(function() {
 
   // reconnected listening
   webSocket.listen(function(message) {
-      console.log(message.text);
-      $('#stream').append('<li><div>'+message.text+'</div></li>');
+      console.log(message);
+      const kafkaEvent = message.payload || {};
+      let strEvent = '<div class="originator">'+_.get(message, 'originator', '')+'</div>';
+      strEvent+='<div class="timestamp">'+_.get(message, 'timestamp', '')+'</div>';
+      strEvent+='<div class="state">'+_.get(kafkaEvent, 'state', '')+'</div>';
+      strEvent+='<div class="phaseTypeName">'+_.get(kafkaEvent, 'phaseTypeName', '')+'</div>';
+      strEvent+='<div class="projectId">'+_.get(kafkaEvent, 'projectId', '')+'</div>';
+      $('#stream').append('<li><div>'+message.text+'</div>'+strEvent+'</li>');
   });
 
   sendMsg('fired up!');

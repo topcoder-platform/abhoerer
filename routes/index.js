@@ -5,7 +5,7 @@ const router = express.Router();
 
 /* GET home page. */
 router.get('/', (req, res) => {
-  res.render('index', { title: 'Abhörer', host: `127.0.0.1:${config.PORT}` });
+  res.render('index', { title: 'Abhörer', host: `${config.HOST}:${config.PORT}` });
 });
 
 module.exports = router;

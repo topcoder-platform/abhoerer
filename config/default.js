@@ -9,6 +9,7 @@ module.exports = {
       key: process.env.KAFKA_CLIENT_CERT_KEY || fs.readFileSync('./kafka_client_prod.key'),
     },
   },
+  HOST: '127.0.0.1',
   PORT: 3000,
   PARTITION: 0,
   TOPIC: 'notifications.kafka.queue.java.test',
