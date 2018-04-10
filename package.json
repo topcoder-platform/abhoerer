@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "postinstall": "npm -g i bower && npm run build",
     "build": "bower install",
     "start": "node ./bin/www"
   },
