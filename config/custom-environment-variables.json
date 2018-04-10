@@ -6,5 +6,6 @@
   "PARTITION": "PARTITION",
   "PORT": "PORT",
   "LOG_LEVEL": "LOG_LEVEL",
-  "WSPORT": "WSPORT"
+  "WSPORT": "WSPORT",
+  "HOST": "HOST"
 }
