@@ -1,4 +1,3 @@
 # .npmignore - the files to not push to NPM
 src/
 coverage/
-public/bower_components/
