@@ -1,9 +1,11 @@
-var express = require('express');
-var router = express.Router();
+const config = require('config');
+const express = require('express');
+
+const router = express.Router();
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Abhörer' });
+router.get('/', (req, res) => {
+  res.render('index', { title: 'Abhörer', host: `${config.HOST}:${config.PORT}` });
 });
 
 module.exports = router;
