@@ -11,6 +11,7 @@ module.exports = {
   },
   HOST: '127.0.0.1',
   PORT: 3000,
+  WSPORT: 80,
   PARTITION: 0,
   TOPIC: 'notifications.kafka.queue.java.test',
 };

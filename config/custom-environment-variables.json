@@ -5,5 +5,6 @@
   "TOPIC": "TOPIC",
   "PARTITION": "PARTITION",
   "PORT": "PORT",
-  "LOG_LEVEL": "LOG_LEVEL"
+  "LOG_LEVEL": "LOG_LEVEL",
+  "WSPORT": ""
 }
